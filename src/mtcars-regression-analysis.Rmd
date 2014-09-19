@@ -1,0 +1,45 @@
+---
+output:
+  html_document:
+    theme: cerulean
+author: "Andre Balleyguier"
+date: "September 2014"
+title: "Factor analysis of car miles per gallon (MPG)"
+---
+
+This document is my Course Project submission for the class "Regression Models" on Coursera.
+
+# Summary
+
+This study is an analysis of the very famous <mtcars dataset>(https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html), available in R. It aims at explaining the possible relationships between a car's miles per gallon measure, and the different other characteristics of the car. In particular, we will focus our attention on the transmission in order to give an answer to the two following questions:
+
+* Is an automatic or manual transmission better for MPG?
+* How can we quantify the MPG difference between automatic and manual transmissions?
+
+First of all, we will explore the data to get a better overview of the underlying patterns in the dataset, and then we will build several linear models to explain and quantify the relationships between transmission and MPG.
+
+# Analysis
+
+## Data Exploration
+
+### Loading data
+
+```{r}
+data(mtcars)
+summary(mtcars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Simple model
+
+
+## Further models and quantitative analysis
+
+# Appendix
