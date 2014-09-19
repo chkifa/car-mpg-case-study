@@ -1,10 +1,11 @@
 ---
-output:
-  html_document:
-    theme: cerulean
+title: "Factor analysis of car miles per gallon (MPG)"
 author: "Andre Balleyguier"
 date: "September 2014"
-title: "Factor analysis of car miles per gallon (MPG)"
+output:
+  pdf_document: default
+  html_document:
+    theme: cerulean
 ---
 
 This document is my Course Project submission for the class "Regression Models" on Coursera.
