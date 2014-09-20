@@ -1,12 +1,6 @@
----
-title: "Factor analysis of car miles per gallon (MPG)"
-author: "Andre Balleyguier"
-date: "September 2014"
-output:
-  pdf_document: default
-  html_document:
-    theme: cerulean
----
+Factor analysis of car miles per gallon (MPG)
+==========================
+
 
 This document is my Course Project submission for the class "Regression Models" on Coursera.
 
@@ -21,56 +15,54 @@ First of all, we will explore the data to get a better overview of the underlyin
 
 # Analysis
 
-## Data Exploration
+## Data exploration
 
 ### Loading data
 
 
 ```r
 data(mtcars)
-summary(mtcars)
+str(mtcars)
 ```
 
 ```
-##       mpg            cyl            disp             hp       
-##  Min.   :10.4   Min.   :4.00   Min.   : 71.1   Min.   : 52.0  
-##  1st Qu.:15.4   1st Qu.:4.00   1st Qu.:120.8   1st Qu.: 96.5  
-##  Median :19.2   Median :6.00   Median :196.3   Median :123.0  
-##  Mean   :20.1   Mean   :6.19   Mean   :230.7   Mean   :146.7  
-##  3rd Qu.:22.8   3rd Qu.:8.00   3rd Qu.:326.0   3rd Qu.:180.0  
-##  Max.   :33.9   Max.   :8.00   Max.   :472.0   Max.   :335.0  
-##       drat            wt            qsec            vs       
-##  Min.   :2.76   Min.   :1.51   Min.   :14.5   Min.   :0.000  
-##  1st Qu.:3.08   1st Qu.:2.58   1st Qu.:16.9   1st Qu.:0.000  
-##  Median :3.69   Median :3.33   Median :17.7   Median :0.000  
-##  Mean   :3.60   Mean   :3.22   Mean   :17.8   Mean   :0.438  
-##  3rd Qu.:3.92   3rd Qu.:3.61   3rd Qu.:18.9   3rd Qu.:1.000  
-##  Max.   :4.93   Max.   :5.42   Max.   :22.9   Max.   :1.000  
-##        am             gear           carb     
-##  Min.   :0.000   Min.   :3.00   Min.   :1.00  
-##  1st Qu.:0.000   1st Qu.:3.00   1st Qu.:2.00  
-##  Median :0.000   Median :4.00   Median :2.00  
-##  Mean   :0.406   Mean   :3.69   Mean   :2.81  
-##  3rd Qu.:1.000   3rd Qu.:4.00   3rd Qu.:4.00  
-##  Max.   :1.000   Max.   :5.00   Max.   :8.00
+## 'data.frame':	32 obs. of  11 variables:
+##  $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##  $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+##  $ disp: num  160 160 108 258 360 ...
+##  $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+##  $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##  $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+##  $ qsec: num  16.5 17 18.6 19.4 17 ...
+##  $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+##  $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+##  $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+##  $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
 ```
 
-You can also embed plots, for example:
+Our main focus is the relationship between transmission "am" variable (binary: 0 = automatic, 1 = manual) and the number of miles per US gallon "mpg" variable. For ease of use, let's build a "transmission" factor variable out of the "am"" variable:
 
 
-```
-## Warning: NAs introduced by coercion
-## Warning: no non-missing arguments to min; returning Inf
-## Warning: no non-missing arguments to max; returning -Inf
+```r
+mtcars$transmission <- factor(mtcars$am, labels = c("automatic", "manual"))
 ```
 
-```
-## Error: need finite 'ylim' values
+### Data visualisation
+
+Visualising "transmission" and "MPG" variables can help us understand the main patterns in the data. The figure 1 shows that manual cars tend to have higher MPG values. This is confirmed by Figure 2, as it appears clearly that the distribution of MPG for manual cars is higher than for automatic cars.
+
+
+```r
+library(ggplot2)
+g1 <- ggplot(mtcars, aes(x=mpg, fill = transmission)) + 
+  geom_histogram(binwidth = 1, col = "black") +
+  ggtitle('Figure 1: Histogram of Miles per US Gallon values')
+g2 <- ggplot(mtcars, aes(x=transmission, y=mpg, fill = transmission)) +
+  geom_boxplot(adjust = 1) + geom_jitter(size = 2) +
+  ggtitle('Figure 2: Boxplot of MPG values for each transmission')
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Thus, this gives an indication about the answer of the first question: manual cars seems to be better for MPG. We should now try to model and quantify this relationship.
 
 ## Simple model
 
@@ -78,3 +70,4 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 ## Further models and quantitative analysis
 
 # Appendix
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-41.png) ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-42.png) 
