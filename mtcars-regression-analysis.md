@@ -80,7 +80,7 @@ Thus, we will first model with only "transmission" as a predictor, and then we w
 ## Simple model
 
 
-## Further models and quantitative analysis
+## Multivariate model and quantitative analysis
 
 # Appendix
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-51.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-52.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) 
+![plot of chunk fig](figure/fig1.png) ![plot of chunk fig](figure/fig2.png) ![plot of chunk fig](figure/fig3.png) 

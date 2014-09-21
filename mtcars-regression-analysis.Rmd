@@ -64,7 +64,7 @@ Thus, we will first model with only "transmission" as a predictor, and then we w
 ## Multivariate model and quantitative analysis
 
 # Appendix
-```{r, echo=FALSE}
+```{r fig, echo=FALSE}
 g1
 g2
 g3
