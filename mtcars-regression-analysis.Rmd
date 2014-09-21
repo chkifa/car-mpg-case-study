@@ -21,7 +21,6 @@ First of all, we will explore the data to get a better overview of the underlyin
 
 ```{r}
 data(mtcars)
-str(mtcars)
 ```
 
 Our main focus is the relationship between transmission "am" variable (binary: 0 = automatic, 1 = manual) and the number of miles per US gallon "mpg" variable. For ease of use, let's build a "transmission" factor variable out of the "am"" variable:
