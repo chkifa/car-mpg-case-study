@@ -6,7 +6,7 @@ This document is my Course Project submission for the class "Regression Models" 
 
 # Summary
 
-This study is an analysis of the very famous <mtcars dataset>(https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html), available in R. It aims at explaining the possible relationships between a car's miles per gallon measure, and the different other characteristics of the car. In particular, we will focus our attention on the transmission in order to give an answer to the two following questions:
+This study is an analysis of the very famous [mtcars dataset](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html), available in R. It aims at explaining the possible relationships between a car's miles per gallon measure, and the different other characteristics of the car. In particular, we will focus our attention on the transmission in order to give an answer to the two following questions:
 
 * Is an automatic or manual transmission better for MPG?
 * How can we quantify the MPG difference between automatic and manual transmissions?
@@ -47,25 +47,108 @@ g2 <- ggplot(mtcars, aes(x=transmission, y=mpg, fill = transmission)) +
 
 Thus, this gives an indication about the answer of the first question: manual cars seem to be better for MPG.
 
-However, this MPG difference is not necessarily explained by the transmission only. The transmission might indeed be related to other variables in the dataset that may explain that difference. We can visualise the relationships between pairs with a pair plot. In the figure 3 we notice that the transmission is highly related to other variables like "disp" (Displacement), "drat" (Rear axle ratio) and "cyl" (number of cylinders), and those variables are highly correlated to MPG. We have to be careful when quantifying the effect of transmission on MPG.
+However, this MPG difference is not necessarily explained by the transmission only. The transmission might indeed be related to other variables in the dataset that may explain that difference. We can visualise the relationships between pairs of variables with a pair plot. In the figure 3 we notice that the transmission is highly related to "disp" (Displacement), "drat" (Rear axle ratio) and "cyl" (number of cylinders), and those variables are all highly correlated to MPG. We have to be careful when quantifying the effect of transmission on MPG and make sure we also take into account the adjustments from the other variables.
 
 ```{r}
-library(stats);library(graphics)
+library(stats);library(graphics);library(GGally)
 g3 <- ggpairs(subset(mtcars, select = c(1,2,3,5,9,11)),
               colour = 'transmission', alpha = 0.6, 
-              title = "Pair relationships in the mtcars dataset. Blue: manual, Red: automatic")
+              title = "Figure 3: Pair relationships in the mtcars dataset. Blue: manual, Red: automatic")
 ```
 
-Thus, we will first model with only "transmission" as a predictor, and then we will add other variables in a more complex regression model to isolate and quantify the effect of transmission on MPG.
+Thus, we will first model with only "transmission" as a predictor, and then we will add other variables in a more complex regression model to isolate and esimate the effect of transmission on MPG.
 
 ## Simple model
 
+In this section, we will simply give an unadjusted estimate of the effect of transmission on MPG. We just need to fit a linear model and compute the confidence interval.
 
-## Multivariate model and quantitative analysis
+```{r}
+unadj.model <-lm(mpg ~ transmission, data=mtcars)
+coeff <- summary(unadj.model)$coefficients
+unadj.interv <- coeff[2,1] + c(-1,1) * qt(0.975, df = unadj.model$df) * coeff[2,2]
+coeff
+```
+
+The above code chunk fits a linear model (with slope) of MPG vs transmission, and shows that a manual transmission is marginally related to a greater MPG (p-value: `r coeff[2,4]` < 0.95). When considering the unadjusted model, compared to an automatic transmission, a manual tranmission increases MPG by `r coeff[2,1]` on average, and the 95% confidence interval for this increase is [`r unadj.interv[1]`, `r unadj.interv[2]`].
+
+When plotting the residuals of the unadjusted model, we observe a larger variability of MPG residuals for manual transmission than for automatic transmission. This heteroskedaticity may indicate that some model terms are missing. Thus, we should try to include other variables into our model.
+
+```{r}
+g4 <- ggplot(mtcars, aes(x = transmission, y = resid(unadj.model), fill = transmission)) +
+  geom_boxplot(adjust = 1) + geom_jitter(size = 2) +
+  ylab("Residuals") +
+  ggtitle("Figure 4: Residuals of the unadjusted linear model of MPG")
+```
+
+## Multivariate model
+
+Our strategy for selecting the best model will rely on variance inflation. We will discard all the variables too redondant with the other variables by computing variance inflation for each of the variables in the dataset.
+
+```{r}
+library(car)
+fit <- lm(mpg ~ ., data=mtcars)
+vif(fit)
+```
+
+We observe that "cyl", "disp" and "wt" variables have a high variance inflation coefficient. We decide to discard them to make our model more parcimonious. Now, we try to add sequentially each of the remaining variables and compute the increase of the model variance.
+
+```{r}
+a <- summary(unadj.model)$cov.unscaled[2,2]
+vars = list()
+hp.model <- update(unadj.model, mpg ~ transmission + hp)
+vars <- append(vars, summary(hp.model)$cov.unscaled[2,2] / a)
+drat.model <- update(unadj.model, mpg ~ transmission + drat)
+vars <- append(vars, summary(drat.model)$cov.unscaled[2,2] / a)
+qsec.model <- update(unadj.model, mpg ~ transmission + qsec)
+vars <- append(vars, summary(qsec.model)$cov.unscaled[2,2] / a)
+vs.model <- update(unadj.model, mpg ~ transmission + vs)
+vars <- append(vars, summary(vs.model)$cov.unscaled[2,2] / a)
+gear.model <- update(unadj.model, mpg ~ transmission + gear)
+vars <- append(vars, summary(gear.model)$cov.unscaled[2,2] / a)
+carb.model <- update(unadj.model, mpg ~ transmission + carb)
+vars <- append(vars, summary(carb.model)$cov.unscaled[2,2] / a)
+str(vars)
+```
+
+The above result shows us that we can safely include the "carb" variable into our model. Let us repeat this operation with another variable. The variance inflation from "gear" is high, so we decide to discard it.
+
+
+```{r}
+summary(cyl2.model)$cov.unscaled[2,2] / b
+hp2.model <- update(carb.model, mpg ~ transmission + hp + carb)
+summary(hp2.model)$cov.unscaled[2,2] / b
+drat2.model <- update(carb.model, mpg ~ transmission + drat + carb)
+summary(drat2.model)$cov.unscaled[2,2] / b
+qsec2.model <- update(carb.model, mpg ~ transmission + qsec + carb)
+summary(qsec2.model)$cov.unscaled[2,2] / b
+vs2.model <- update(carb.model, mpg ~ transmission + vs + carb)
+summary(vs2.model)$cov.unscaled[2,2] / b
+```
+
+Following those results, we decide to include "qsec" and "vs" in the model. We discard the "drat" variable. Our final model then contains "qsec", "transmission" and "carb" variables.
+
+```{r}
+adj.coeff <- summary(qsec2.model)$coefficients
+adj.interv <- adj.coeff[2,1] + c(-1,1) * qt(0.975, df = qsec2.model$df) * adj.coeff[2,2]
+```
+
+The R^2 for this model is 0.7638, which is satisfying. We plotted the residual plots in Figure 5, and there is not any strong unusual pattern. The adjusted estimated increase of MPG explained by a manual tranmission is 8.4353. The adjusted 95% confidence interval is [`r adj.interv[1]`, `r adj.interv[2]`].
+
 
 # Appendix
-```{r fig, echo=FALSE}
+```{r exploration, echo=FALSE, fig.align="center"}
 g1
 g2
+```
+
+```{r pairplot, echo=FALSE, fig.align="center", fig.width=12, fig.height=8}
 g3
 ```
+
+```{r residuals, echo=FALSE, fig.align="center"}
+g4
+par(mfrow = c(2,2))
+plot(qsec2.model)
+title("Figure 5: Residual plot of the final model")
+```
+
