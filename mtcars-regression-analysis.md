@@ -45,6 +45,7 @@ Our main focus is the relationship between transmission "am" variable (binary: 0
 
 ```r
 mtcars$transmission <- factor(mtcars$am, labels = c("automatic", "manual"))
+mtcars <- subset(mtcars, select = -c(9))
 ```
 
 ### Data visualisation
@@ -62,7 +63,19 @@ g2 <- ggplot(mtcars, aes(x=transmission, y=mpg, fill = transmission)) +
   ggtitle('Figure 2: Boxplot of MPG values for each transmission')
 ```
 
-Thus, this gives an indication about the answer of the first question: manual cars seems to be better for MPG. We should now try to model and quantify this relationship.
+Thus, this gives an indication about the answer of the first question: manual cars seem to be better for MPG.
+
+However, this MPG difference is not necessarily explained by the transmission only. The transmission might indeed be related to other variables in the dataset that may explain that difference. We can visualise the relationships between pairs with a pair plot. In the figure 3 we notice that the transmission is highly related to other variables like "disp" (Displacement), "drat" (Rear axle ratio) and "cyl" (number of cylinders), and those variables are highly correlated to MPG. We have to be careful when quantifying the effect of transmission on MPG.
+
+
+```r
+library(stats);library(graphics)
+g3 <- ggpairs(subset(mtcars, select = c(1,2,3,5,9,11)),
+              colour = 'transmission', alpha = 0.6, 
+              title = "Pair relationships in the mtcars dataset. Blue: manual, Red: automatic")
+```
+
+Thus, we will first model with only "transmission" as a predictor, and then we will add other variables in a more complex regression model to isolate and quantify the effect of transmission on MPG.
 
 ## Simple model
 
@@ -70,4 +83,4 @@ Thus, this gives an indication about the answer of the first question: manual ca
 ## Further models and quantitative analysis
 
 # Appendix
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-41.png) ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-42.png) 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-51.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-52.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) 
