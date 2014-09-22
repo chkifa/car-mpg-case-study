@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 Factor analysis of car miles per gallon (MPG)
 ==========================
 
@@ -205,4 +208,3 @@ The R^2 for this model is 0.7638, which is satisfying. We plotted the residual p
 <img src="figure/pairplot.png" title="plot of chunk pairplot" alt="plot of chunk pairplot" style="display: block; margin: auto;" />
 
 <img src="figure/residuals1.png" title="plot of chunk residuals" alt="plot of chunk residuals" style="display: block; margin: auto;" /><img src="figure/residuals2.png" title="plot of chunk residuals" alt="plot of chunk residuals" style="display: block; margin: auto;" />
-

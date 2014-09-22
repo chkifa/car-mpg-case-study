@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 Factor analysis of car miles per gallon (MPG)
 ==========================
 
@@ -146,8 +149,6 @@ g3
 
 ```{r residuals, echo=FALSE, fig.align="center"}
 g4
-par(mfrow = c(2,2))
-plot(qsec2.model)
-title("Figure 5: Residual plot of the final model")
+par(mfrow = c(2,2),oma=c(0,0,2,0))
+plot(qsec2.model, sub.caption = "Figure 5: Residual plot of the final model")
 ```
-
